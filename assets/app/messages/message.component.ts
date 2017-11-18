@@ -25,6 +25,8 @@ export class MessageComponent {
     @Input() message: Message;
     @Output() editClicked = new EventEmitter<string>(); 
 
+    color = 'red';
+
     onEdit() {
         alert('It worked');
         this.editClicked.emit('A new value');
