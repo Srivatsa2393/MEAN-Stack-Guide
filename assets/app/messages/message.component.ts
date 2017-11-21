@@ -31,7 +31,7 @@ export class MessageComponent {
     color = 'red';
 
     onEdit() {
-        alert('It worked');
+        //alert('It worked');
         this.editClicked.emit('A new value');
     }
 
