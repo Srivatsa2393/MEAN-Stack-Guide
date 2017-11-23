@@ -4,7 +4,7 @@ var bcrypt = require('bcryptjs');
 
 var User = require('../models/user');
 
-router.post('/signup', function(req, res, next) {
+router.post('/', function(req, res, next) {
     var user = new User({
         firstName: req.body.firstName,
         lastName: req.body.lastName,
