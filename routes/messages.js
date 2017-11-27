@@ -19,7 +19,7 @@ router.use('/', function(req, res, next) {
 });
 
 router.post('/', function (req, res, next) {
-    const decoded = jwt.decode(req.query.token);
+    var decoded = jwt.decode(req.query.token);
     User.findById(decoded.user._id, (err, user) => {
         if(err) {
             return res.status(500).json({
@@ -72,6 +72,7 @@ router.get('/', function(req, res, next) {
 
 //updating messages
 router.patch('/:id', function(req, res, next) {
+    var decoded = jwt.decode(req.query.token);
     Message.findById(req.params.id, function(err, message) {
         if (err) {
             return res.status(500).json({
@@ -84,6 +85,12 @@ router.patch('/:id', function(req, res, next) {
                 title: 'No message found',
                 error: {message: 'Message not found'}
             });
+        }
+        if (message.user != decoded.user._id) {
+                return res.status(401).json({
+                    titlte: 'Not Authenticated',
+                    error: {message: 'Users do not match'}
+                });
         }
         message.content = req.body.content;
         message.save(function(err, result) {
@@ -103,6 +110,7 @@ router.patch('/:id', function(req, res, next) {
 
 //delete message route
 router.delete('/:id', function(req, res, next) {
+    var decoded = jwt.decode(req.query.token);
     Message.findById(req.params.id, function(err, message) {
         if (err) {
             return res.status(500).json({
@@ -116,11 +124,17 @@ router.delete('/:id', function(req, res, next) {
                 error: {message: 'Message not found'}
             });
         }
+        if (message.user != decoded.user._id) {
+            return res.status(401).json({
+                titlte: 'Not Authenticated',
+                error: err
+            });
+        }
         message.remove(function(err, result) {
             if (err) {
                 return res.status(500).json({
                     title: 'An error occured',
-                    error: err
+                    error: {message: 'Users do not match'}
                 });
             }
             res.status(200).json({
