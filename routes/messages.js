@@ -19,31 +19,35 @@ router.use('/', function(req, res, next) {
 });
 
 router.post('/', function (req, res, next) {
-    var decoded = jwt.decode(req.query.token);
-    User.findById(decoded.user._id, function(err, user) {
-        if (err) {
+    const decoded = jwt.decode(req.query.token);
+    User.findById(decoded.user._id, (err, user) => {
+        if(err) {
             return res.status(500).json({
-                title: 'An error occured',
+                title: 'An error occurred',
                 error: err
             });
         }
-        var message = new Message({
+        const message = new Message({
             content: req.body.content,
-            user: user
+            user: user._id //CHANGE HERE
         });
+ 
         message.save(function(err, result) {
-            if (err) {
+            if(err) {
                 return res.status(500).json({
-                    title: 'An error occured',
+                    title: 'An error occurred',
                     error: err
                 });
             }
+ 
             user.messages.push(result);
-            user.save();
+ 
             res.status(201).json({
-                message: 'Saved the message',
+                message: 'Saved message',
                 obj: result
             });
+            user.save();
+ 
         });
     });
 });
